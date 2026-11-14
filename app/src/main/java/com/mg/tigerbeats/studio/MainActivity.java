@@ -324,6 +324,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
+        public boolean playDeviceSong(String uriStr, String title, String artist, String queueJson) {
+            return playDeviceSong(uriStr, title, artist);
+        }
+
+        @JavascriptInterface
         public boolean playDeviceSong(String uriStr, String title, String artist) {
             try {
                 if (devicePlayer != null) {

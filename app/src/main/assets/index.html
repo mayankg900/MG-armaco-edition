@@ -2261,6 +2261,22 @@ html.low-ram-guard *::after {
         <button id="btnSettingsBackPortal" type="button" class="daw-btn daw-btn-emerald py-1.5 px-2.5 text-[10px] font-bold">🎬 OPENING SCREEN</button>
       </div>
     </section>
+    <section class="rounded-xl bg-slate-900/90 border border-amber-500/40 p-3.5 flex flex-col gap-2">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <h3 class="font-bold text-xs text-amber-300">⚡ Local Audio Engine Mode</h3>
+          <p class="text-[10px] text-slate-400 mt-0.5">Choose how local device music loads when selected from Library or Storage</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+          <input type="checkbox" id="chkAutoMixLocalAudio" class="sr-only peer">
+          <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+        </label>
+      </div>
+      <div class="text-[10.5px] text-slate-300 bg-slate-950/70 border border-slate-800 rounded-xl p-2.5">
+        <div>• <strong>OFF (Instant Quick Playback)</strong>: Zero-wait native streaming via Android MediaPlayer.</div>
+        <div>• <strong>ON (Auto-Mix Studio DAW)</strong>: Automatically decodes full waveform into WebAudio for instant 8D, Slowed+Reverb, and Pitch Shifting effects.</div>
+      </div>
+    </section>
     <section class="rounded-xl bg-slate-900/90 border border-emerald-500/40 p-3.5 flex flex-col gap-2">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <div>
@@ -7922,12 +7938,22 @@ function openSettings() {
   const bytes = window.AndroidBridge && window.AndroidBridge.getCacheBytes ? Number(window.AndroidBridge.getCacheBytes()) : 0;
   $('settingsCacheSize').textContent = (bytes / (1024 * 1024)).toFixed(1) + ' MB used on this device';
   $('studioThemeSelect').value = currentStudioTheme();
+  if ($('chkAutoMixLocalAudio')) {
+    $('chkAutoMixLocalAudio').checked = localStorage.getItem('tigerbeats_auto_mix_local') === '1';
+  }
 }
 function closeSettings() { $('settingsModal').classList.add('hidden'); $('settingsModal').classList.remove('flex'); }
 $('btnSettingsPrimary').addEventListener('click', openSettings);
 $('btnSettingsQuick').addEventListener('click', openSettings);
 $('btnCloseSettings').addEventListener('click', closeSettings);
 $('studioThemeSelect').addEventListener('change', event => { applyStudioTheme(event.target.value); toast('Studio theme saved on this device.'); });
+if ($('chkAutoMixLocalAudio')) {
+  $('chkAutoMixLocalAudio').addEventListener('change', (e) => {
+    const checked = e.target.checked;
+    localStorage.setItem('tigerbeats_auto_mix_local', checked ? '1' : '0');
+    toast(checked ? '⚡ Auto-Mix Mode Active: Local songs load into Studio DAW' : '⚡ Quick Playback Mode Active: Instant local audio streaming');
+  });
+}
 $('btnChooseDownloadFolder').addEventListener('click', () => {
   if (window.AndroidBridge && window.AndroidBridge.chooseDownloadFolder) window.AndroidBridge.chooseDownloadFolder();
   else $('settingsDownloadFolder').textContent = 'Open this setting in the installed Android app.';
@@ -9492,6 +9518,10 @@ async function selectSongFromCrate(val, forceStudioDecode = false) {
 
   const item = S.storageCrateSongs.get(val);
   if (!item) return;
+
+  if (localStorage.getItem('tigerbeats_auto_mix_local') === '1') {
+    forceStudioDecode = true;
+  }
 
   try {
     if (item.androidUri && !forceStudioDecode && window.AndroidBridge && typeof window.AndroidBridge.playDeviceSong === 'function') {

@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
@@ -55,12 +56,24 @@ public class ArmacoPlaybackService extends Service implements AudioManager.OnAud
     private String currentArtist = "Armaco MG Edition";
     private boolean resumeOnFocusGain = false;
 
+    private final BroadcastReceiver noisyReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                pausePlayback();
+            }
+        }
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         createChannelIfNeeded();
         initMediaSession();
+        try {
+            registerReceiver(noisyReceiver, new android.content.IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+        } catch (Exception ignored) {}
     }
 
     private void initMediaSession() {
@@ -397,6 +410,7 @@ public class ArmacoPlaybackService extends Service implements AudioManager.OnAud
 
     @Override
     public void onDestroy() {
+        try { unregisterReceiver(noisyReceiver); } catch (Exception ignored) {}
         clearNotificationAndStop();
         super.onDestroy();
     }
