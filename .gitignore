@@ -1,0 +1,9 @@
+# Project exclude paths
+/.gradle/
+/app/build/
+/app/build/intermediates/javac/debug/classes/
+/build/
+/local_apks/
+*.apk
+release.jks
+app/src/main/assets/obsidian_fury.mp4
