@@ -705,12 +705,12 @@ html.low-ram-guard *::after {
   animation-play-state: running;
 }
 .armaco-tonearm {
-  transform-origin: 24px 12px;
-  transform: rotate(-20deg);
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: 71.11% 12.63%;
+  transform: rotate(0deg);
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .armaco-tonearm.is-playing {
-  transform: rotate(9deg);
+  transform: rotate(25deg);
 }
 
 /* APA-1 Fusion §8: Canonical Material 3 / Fluent 2 Motion Tokens & <16ms Micro-Interactions */
@@ -12838,24 +12838,25 @@ else boot();
 </div>
 
 <style id="v95Master13PointStyles">
-  /* 1. Realistic Tonearm 3-state physics (Section 6) */
+  /* 1. Realistic Tonearm 3-state physics & Mechanical Alignment */
   .armaco-tonearm {
-    transform-origin: 71.1% 12.6% !important;
-    transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease !important;
+    transform-origin: 71.11% 12.63% !important;
+    transform: rotate(0deg) !important;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.35s ease !important;
     will-change: transform;
   }
   .armaco-tonearm.is-parked {
-    transform: rotate(-26deg) translate3d(6px, -2px, 0) !important;
+    transform: rotate(0deg) !important;
     filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.75));
   }
   .armaco-tonearm.is-playing {
-    transform: rotate(58deg) translate3d(-52px, 46px, 0) !important;
+    transform: rotate(25deg) !important;
     filter: drop-shadow(0 12px 20px rgba(0, 242, 254, 0.45));
     animation: v94TonearmGrooveTrack 2.4s ease-in-out infinite alternate;
   }
   @keyframes v94TonearmGrooveTrack {
-    0% { transform: rotate(56.5deg) translate3d(-50px, 44px, 0); }
-    100% { transform: rotate(59.5deg) translate3d(-54px, 48px, 0); }
+    0% { transform: rotate(24.5deg); }
+    100% { transform: rotate(26.5deg); }
   }
   .armaco-tonearm.is-failed {
     transform: perspective(360px) rotateX(48deg) rotateZ(-44deg) translate3d(16px, -20px, 28px) scale(1.08) !important;
