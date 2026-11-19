@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
+def releaseStorePath = System.getenv('ANDROID_RELEASE_STORE_FILE')
+def releaseStorePassword = System.getenv('ANDROID_RELEASE_STORE_PASSWORD')
+def releaseKeyAlias = System.getenv('ANDROID_RELEASE_KEY_ALIAS')
+def releaseKeyPassword = System.getenv('ANDROID_RELEASE_KEY_PASSWORD')
+def canSignRelease = releaseStorePath && releaseStorePassword && releaseKeyAlias && releaseKeyPassword
+
 android {
     namespace 'com.mg.tigerbeats.studio'
     compileSdk 35
@@ -14,12 +20,14 @@ android {
         versionName "9.4.0-Liquid3D"
     }
 
-    signingConfigs {
-        release {
-            storeFile file('../release.jks')
-            storePassword 'tigerbeats123'
-            keyAlias 'tigerbeats'
-            keyPassword 'tigerbeats123'
+    if (canSignRelease) {
+        signingConfigs {
+            release {
+                storeFile file(releaseStorePath)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
         }
     }
 
@@ -32,7 +40,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+            if (canSignRelease) signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
