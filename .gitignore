@@ -1,9 +1,15 @@
-# Project exclude paths
-/.gradle/
-/app/build/
-/app/build/intermediates/javac/debug/classes/
-/build/
+# Local Android SDK configuration and signing material must stay out of version control.
+/local.properties
+/release.jks
+*.jks
+*.keystore
+
+# Gradle and Android build outputs.
+.gradle/
+**/build/
 /local_apks/
 *.apk
-release.jks
-app/src/main/assets/obsidian_fury.mp4
+
+# IDE user state.
+.idea/workspace.xml
+.idea/shelf/
